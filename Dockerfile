@@ -1,11 +1,18 @@
-FROM oven/bun:1-alpine
-
+FROM oven/bun:1-alpine AS base
 WORKDIR /app
 
-COPY package.json bun.lock* ./
+FROM base AS install
+RUN mkdir -p /temp/prod
+COPY package.json bun.lock* /temp/prod/
+RUN cd /temp/prod && bun install --frozen-lockfile --production
 
-RUN bun install --frozen-lockfile
+FROM base AS release
+COPY --from=install /temp/prod/node_modules node_modules
+COPY package.json ./
+COPY src ./src
+COPY drizzle ./drizzle
 
-COPY . .
+ENV NODE_ENV=production
 
+USER bun
 CMD ["bun", "run", "src/index.ts"]

@@ -3,3 +3,13 @@ node_modules
 .git
 *.log
 README.md
+.env.example
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose.yml
+scripts
+drizzle.config.ts
+*.md
+.vscode
+.idea
