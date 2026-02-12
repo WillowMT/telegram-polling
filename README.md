@@ -33,20 +33,32 @@ Build and run with Docker Compose:
 docker compose up -d
 ```
 
-Build only:
-
-```bash
-docker compose build
-```
+Set `DATABASE_URL` in `.env` to use an external PostgreSQL database.
 
 ## Commands
 
 - `/start` — Welcome message
 - `/ping` — Responds with "pong"
+- `/stats` — Message count (requires database)
 - Any text message — Echoes back what you sent
+
+## Database (optional)
+
+The bot runs without a database by default. To enable message logging and `/stats`:
+
+1. Create the database (if using a new one): `createdb bot` or `CREATE DATABASE bot;` in psql
+2. Set `DATABASE_URL` in `.env` (e.g. `postgresql://user:password@localhost:5432/bot`)
+3. Generate migrations: `bun run db:generate`
+4. Run migrations: `bun run db:migrate` (or start the bot — migrations run at startup)
+
+```bash
+bun run db:generate
+bun run db:migrate
+```
 
 ## Environment
 
-| Variable   | Description                    |
-| ---------- | ------------------------------ |
-| `BOT_TOKEN` | Your Telegram bot token from BotFather |
+| Variable      | Description                                                |
+| ------------- | ---------------------------------------------------------- |
+| `BOT_TOKEN`   | Your Telegram bot token from BotFather                     |
+| `DATABASE_URL` | Optional. PostgreSQL connection string for message logging |
