@@ -1,5 +1,5 @@
 import { Bot } from "grammy";
-import { count } from "drizzle-orm";
+import { count, sql } from "drizzle-orm";
 import { db, hasDb, initDb, messageLog } from "./db";
 
 const token = process.env.BOT_TOKEN;
@@ -12,6 +12,19 @@ bot.command("start", (ctx) =>
 );
 
 bot.command("ping", (ctx) => ctx.reply("pong"));
+
+bot.command("testdb", async (ctx) => {
+  if (!db) {
+    await ctx.reply("Database is not configured.");
+    return;
+  }
+  try {
+    await db.execute(sql`SELECT 1 as ok`);
+    await ctx.reply("Database connection OK");
+  } catch (err) {
+    await ctx.reply(`Database connection failed: ${err instanceof Error ? err.message : String(err)}`);
+  }
+});
 
 bot.command("stats", async (ctx) => {
   if (!db) {
